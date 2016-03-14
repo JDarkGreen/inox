@@ -1,10 +1,10 @@
 @font-face {
     font-family: 'Nextend';
-    src:    url(//www.iuigv.com/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.eot?e06y41);
-    src:    url(//www.iuigv.com/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.eot?e06y41#iefix) format('embedded-opentype'),
-    url(//www.iuigv.com/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.ttf?e06y41) format('truetype'),
-    url(//www.iuigv.com/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.woff?e06y41) format('woff'),
-    url(//www.iuigv.com/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.svg?e06y41#Nextend) format('svg');
+    src:    url(//localhost/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.eot?e06y41);
+    src:    url(//localhost/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.eot?e06y41#iefix) format('embedded-opentype'),
+    url(//localhost/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.ttf?e06y41) format('truetype'),
+    url(//localhost/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.woff?e06y41) format('woff'),
+    url(//localhost/inox/wp-content/plugins/smart-slider-3/nextend/media/css/../fonts/Nextend.svg?e06y41#Nextend) format('svg');
     font-weight: normal;
     font-style: normal;
 }

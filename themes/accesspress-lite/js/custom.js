@@ -27,4 +27,11 @@ jQuery(function(){
     
     jQuery(".fancybox-gallery").nivoLightbox();
 
+
+    //FANCYBOX
+    jQuery(".fancybox").fancybox({
+      openEffect  : 'none',
+      closeEffect : 'none'
+    });
+
  });

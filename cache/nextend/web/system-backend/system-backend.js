@@ -4062,6 +4062,494 @@
 ;
 (function ($, scope) {
 
+    function NextendVisualManagerModals(visualManager) {
+        this.visualManager = visualManager;
+        this.linkedOverwriteOrSaveAs = null;
+        this.saveAs = null;
+    };
+
+    NextendVisualManagerModals.prototype.getLinkedOverwriteOrSaveAs = function () {
+        if (this.linkedOverwriteOrSaveAs == null) {
+            var context = this;
+            this.linkedOverwriteOrSaveAs = new NextendModal({
+                zero: {
+                    size: [
+                        500,
+                        140
+                    ],
+                    title: '',
+                    back: false,
+                    close: true,
+                    content: '',
+                    controls: ['<a href="#" class="n2-button n2-button-big n2-button-grey n2-uc n2-h4">' + n2_('Save as new') + '</a>', '<a href="#" class="n2-button n2-button-big n2-button-green n2-uc n2-h4">' + n2_('Overwrite current') + '</a>'],
+                    fn: {
+                        show: function () {
+                            this.title.html(n2_printf(n2_('%s changed - %s'), context.visualManager.labels.visual, context.visualManager.activeVisual.name));
+                            if (context.visualManager.activeVisual && !context.visualManager.activeVisual.isEditable()) {
+                                this.loadPane('saveAsNew');
+                            } else {
+                                this.controls.find('.n2-button-green')
+                                    .on('click', $.proxy(function (e) {
+                                        e.preventDefault();
+                                        context.visualManager.saveActiveVisual(context.visualManager.activeVisual.name)
+                                            .done($.proxy(function () {
+                                                this.hide(e);
+                                                context.visualManager.setAndClose(context.visualManager.activeVisual.id);
+                                                context.visualManager.hide();
+                                            }, this));
+                                    }, this));
+
+                                this.controls.find('.n2-button-grey')
+                                    .on('click', $.proxy(function (e) {
+                                        e.preventDefault();
+                                        this.loadPane('saveAsNew');
+                                    }, this));
+                            }
+                        }
+                    }
+                },
+                saveAsNew: {
+                    size: [
+                        500,
+                        220
+                    ],
+                    title: n2_('Save as'),
+                    back: 'zero',
+                    close: true,
+                    content: '<form class="n2-form"></form>',
+                    controls: ['<a href="#" class="n2-button n2-button-big n2-button-green n2-uc n2-h4">' + n2_('Save as new') + '</a>'],
+                    fn: {
+                        show: function () {
+
+                            var button = this.controls.find('.n2-button'),
+                                form = this.content.find('.n2-form').on('submit', function (e) {
+                                    e.preventDefault();
+                                    button.trigger('click');
+                                }).append(this.createInput(n2_('Name'), 'n2-visual-name', 'width: 446px;')),
+                                nameField = this.content.find('#n2-visual-name').focus();
+
+                            if (context.visualManager.activeVisual) {
+                                nameField.val(context.visualManager.activeVisual.name);
+                            }
+
+                            button.on('click', $.proxy(function (e) {
+                                e.preventDefault();
+                                var name = nameField.val();
+                                if (name == '') {
+                                    nextend.notificationCenter.error(n2_('Please fill the name field!'));
+                                } else {
+                                    context.visualManager._saveAsNew(name)
+                                        .done($.proxy(function () {
+                                            this.hide(e);
+                                            context.visualManager.setAndClose(context.visualManager.activeVisual.id);
+                                            context.visualManager.hide();
+                                        }, this));
+                                }
+                            }, this));
+                        }
+                    }
+                }
+            }, false);
+        }
+        return this.linkedOverwriteOrSaveAs;
+    };
+
+    NextendVisualManagerModals.prototype.getSaveAs = function () {
+        if (this.saveAs === null) {
+            var context = this;
+            this.saveAs = new NextendModal({
+                zero: {
+                    size: [
+                        500,
+                        220
+                    ],
+                    title: n2_('Save as'),
+                    back: false,
+                    close: true,
+                    content: '<form class="n2-form"></form>',
+                    controls: ['<a href="#" class="n2-button n2-button-big n2-button-green n2-uc n2-h4">' + n2_('Save as new') + '</a>'],
+                    fn: {
+                        show: function () {
+
+                            var button = this.controls.find('.n2-button'),
+                                form = this.content.find('.n2-form').on('submit', function (e) {
+                                    e.preventDefault();
+                                    button.trigger('click');
+                                }).append(this.createInput(n2_('Name'), 'n2-visual-name', 'width: 446px;')),
+                                nameField = this.content.find('#n2-visual-name').focus();
+
+                            if (context.visualManager.activeVisual) {
+                                nameField.val(context.visualManager.activeVisual.name);
+                            }
+
+                            button.on('click', $.proxy(function (e) {
+                                e.preventDefault();
+                                var name = nameField.val();
+                                if (name == '') {
+                                    nextend.notificationCenter.error(n2_('Please fill the name field!'));
+                                } else {
+                                    context.visualManager._saveAsNew(name)
+                                        .done($.proxy(this.hide, this, e));
+                                }
+                            }, this));
+                        }
+                    }
+                }
+            }, false);
+        }
+        return this.saveAs;
+    };
+
+    scope.NextendVisualManagerModals = NextendVisualManagerModals;
+})(n2, window);
+;
+(function ($, scope) {
+
+    function NextendVisualSetsManager(visualManager) {
+        this.visualManager = visualManager;
+        this.$ = $(this);
+    }
+
+    scope.NextendVisualSetsManager = NextendVisualSetsManager;
+
+    function NextendVisualSetsManagerEditable(visualManager) {
+        this.modal = null;
+        NextendVisualSetsManager.prototype.constructor.apply(this, arguments);
+
+        this.$.on({
+            setAdded: function (e, set) {
+                new NextendVisualSet(set, visualManager);
+            },
+            setChanged: function (e, set) {
+                visualManager.sets[set.id].rename(set.value);
+            },
+            setDeleted: function (e, set) {
+                visualManager.sets[set.id].delete();
+                visualManager.setsSelector.trigger('change');
+            }
+        });
+
+        this.manageButton = $('#' + visualManager.parameters.setsIdentifier + '-manage')
+            .on('click', $.proxy(this.showManageSets, this));
+
+    };
+
+    NextendVisualSetsManagerEditable.prototype = Object.create(NextendVisualSetsManager.prototype);
+    NextendVisualSetsManagerEditable.prototype.constructor = NextendVisualSetsManagerEditable;
+
+    NextendVisualSetsManagerEditable.prototype.isSetAllowedToEdit = function (id) {
+        if (id == -1 || typeof this.visualManager.sets[id] == 'undefined' || this.visualManager.sets[id].set.editable == 0) {
+            return false;
+        }
+        return true;
+    };
+
+
+    NextendVisualSetsManagerEditable.prototype.createVisualSet = function (name) {
+        return NextendAjaxHelper.ajax({
+            type: "POST",
+            url: NextendAjaxHelper.makeAjaxUrl(this.visualManager.parameters.ajaxUrl, {
+                nextendaction: 'createSet'
+            }),
+            data: {
+                name: name
+            },
+            dataType: 'json'
+        })
+            .done($.proxy(function (response) {
+                this.$.trigger('setAdded', response.data.set)
+            }, this));
+    };
+
+    NextendVisualSetsManagerEditable.prototype.renameVisualSet = function (id, name) {
+        return NextendAjaxHelper.ajax({
+            type: "POST",
+            url: NextendAjaxHelper.makeAjaxUrl(this.visualManager.parameters.ajaxUrl, {
+                nextendaction: 'renameSet'
+            }),
+            data: {
+                setId: id,
+                name: name
+            },
+            dataType: 'json'
+        })
+            .done($.proxy(function (response) {
+                this.$.trigger('setChanged', response.data.set);
+                nextend.notificationCenter.success(n2_('Set renamed'));
+            }, this));
+    };
+
+    NextendVisualSetsManagerEditable.prototype.deleteVisualSet = function (id) {
+
+        var d = $.Deferred(),
+            set = this.visualManager.sets[id],
+            deferreds = [];
+
+        $.when(set._loadVisuals())
+            .done($.proxy(function () {
+                for (var k in set.visuals) {
+                    deferreds.push(set.visuals[k]._delete());
+                }
+
+                $.when.apply($, deferreds).then($.proxy(function () {
+                    NextendAjaxHelper.ajax({
+                        type: "POST",
+                        url: NextendAjaxHelper.makeAjaxUrl(this.visualManager.parameters.ajaxUrl, {
+                            nextendaction: 'deleteSet'
+                        }),
+                        data: {
+                            setId: id
+                        },
+                        dataType: 'json'
+                    })
+                        .done($.proxy(function (response) {
+                            d.resolve();
+                            this.$.trigger('setDeleted', response.data.set);
+                        }, this));
+                }, this));
+            }, this))
+            .fail(function () {
+                d.reject();
+            });
+        return d
+            .fail(function () {
+                nextend.notificationCenter.error(n2_('Unable to delete the set'));
+            });
+    };
+
+    NextendVisualSetsManagerEditable.prototype.showManageSets = function () {
+        var visualManager = this.visualManager,
+            setsManager = this;
+        if (this.modal === null) {
+            this.modal = new NextendModal({
+                zero: {
+                    size: [
+                        500,
+                        390
+                    ],
+                    title: n2_('Sets'),
+                    back: false,
+                    close: true,
+                    content: '',
+                    controls: ['<a href="#" class="n2-add-new n2-button n2-button-big n2-button-green n2-uc n2-h4">' + n2_('Add new') + '</a>'],
+                    fn: {
+                        show: function () {
+                            this.title.html(n2_printf(n2_('%s sets'), visualManager.labels.visual));
+
+                            this.createHeading(n2_('Sets')).appendTo(this.content);
+                            var data = [];
+                            for (var k in visualManager.sets) {
+                                var id = visualManager.sets[k].set.id;
+                                if (setsManager.isSetAllowedToEdit(id)) {
+                                    data.push([visualManager.sets[k].set.value, $('<div class="n2-button n2-button-grey n2-button-x-small n2-uc n2-h5">' + n2_('Rename') + '</div>')
+                                        .on('click', {id: id}, $.proxy(function (e) {
+                                            this.loadPane('rename', false, false, [e.data.id]);
+                                        }, this)), $('<div class="n2-button n2-button-red n2-button-x-small n2-uc n2-h5">' + n2_('Delete') + '</div>')
+                                        .on('click', {id: id}, $.proxy(function (e) {
+                                            this.loadPane('delete', false, false, [e.data.id]);
+                                        }, this))]);
+                                } else {
+                                    data.push([visualManager.sets[k].set.value, '', '']);
+                                }
+                            }
+                            this.createTable(data, ['width:100%;', '', '']).appendTo(this.createTableWrap().appendTo(this.content));
+
+                            this.controls.find('.n2-add-new')
+                                .on('click', $.proxy(function (e) {
+                                    e.preventDefault();
+                                    this.loadPane('addNew');
+                                }, this));
+                        }
+                    }
+                },
+                addNew: {
+                    title: n2_('Create set'),
+                    size: [
+                        500,
+                        220
+                    ],
+                    back: 'zero',
+                    close: true,
+                    content: '<form class="n2-form"></form>',
+                    controls: ['<a href="#" class="n2-button n2-button-big n2-button-green n2-uc n2-h4">' + n2_('Add') + '</a>'],
+                    fn: {
+                        show: function () {
+
+                            var button = this.controls.find('.n2-button'),
+                                form = this.content.find('.n2-form').on('submit', function (e) {
+                                    e.preventDefault();
+                                    button.trigger('click');
+                                }).append(this.createInput(n2_('Name'), 'n2-visual-name', 'width: 446px;')),
+                                nameField = this.content.find('#n2-visual-name').focus();
+
+                            button.on('click', $.proxy(function (e) {
+                                var name = nameField.val();
+                                if (name == '') {
+                                    nextend.notificationCenter.error(n2_('Please fill the name field!'));
+                                } else {
+                                    setsManager.createVisualSet(name)
+                                        .done($.proxy(function (response) {
+                                            this.hide(e);
+                                            nextend.notificationCenter.success(n2_('Set added'));
+                                            visualManager.setsSelector.val(response.data.set.id).trigger('change')
+                                        }, this));
+                                }
+                            }, this));
+                        }
+                    }
+                },
+                rename: {
+                    title: n2_('Rename set'),
+                    size: [
+                        500,
+                        220
+                    ],
+                    back: 'zero',
+                    close: true,
+                    content: '<form class="n2-form"></form>',
+                    controls: ['<a href="#" class="n2-button n2-button-big n2-button-green n2-uc n2-h4">' + n2_('Rename') + '</a>'],
+                    fn: {
+                        show: function (id) {
+
+                            var button = this.controls.find('.n2-button'),
+                                form = this.content.find('.n2-form').on('submit', function (e) {
+                                    e.preventDefault();
+                                    button.trigger('click');
+                                }).append(this.createInput(n2_('Name'), 'n2-visual-name', 'width: 446px;')),
+                                nameField = this.content.find('#n2-visual-name')
+                                    .val(visualManager.sets[id].set.value).focus();
+
+                            button.on('click', $.proxy(function () {
+                                var name = nameField.val();
+                                if (name == '') {
+                                    nextend.notificationCenter.error(n2_('Please fill the name field!'));
+                                } else {
+                                    setsManager.renameVisualSet(id, name)
+                                        .done($.proxy(this.goBack, this));
+                                }
+                            }, this));
+                        }
+                    }
+                },
+                'delete': {
+                    title: n2_('Delete set'),
+                    size: [
+                        500,
+                        190
+                    ],
+                    back: 'zero',
+                    close: true,
+                    content: '',
+                    controls: ['<a href="#" class="n2-button n2-button-big n2-button-grey n2-uc n2-h4">' + n2_('Cancel') + '</a>', '<a href="#" class="n2-button n2-button-big n2-button-red n2-uc n2-h4">' + n2_('Yes') + '</a>'],
+                    fn: {
+                        show: function (id) {
+
+                            this.createCenteredSubHeading(n2_printf(n2_('Do you really want to delete the set and all associated %s?'), visualManager.labels.visuals)).appendTo(this.content);
+
+                            this.controls.find('.n2-button-grey')
+                                .on('click', $.proxy(function (e) {
+                                    e.preventDefault();
+                                    this.goBack();
+                                }, this));
+
+                            this.controls.find('.n2-button-red')
+                                .html('Yes, delete "' + visualManager.sets[id].set.value + '"')
+                                .on('click', $.proxy(function (e) {
+                                    e.preventDefault();
+                                    setsManager.deleteVisualSet(id)
+                                        .done($.proxy(this.goBack, this));
+                                }, this));
+                        }
+                    }
+                }
+            }, false);
+        }
+        this.modal.show(false, [this.visualManager.setsSelector.val()]);
+    };
+
+    scope.NextendVisualSetsManagerEditable = NextendVisualSetsManagerEditable;
+
+
+    function NextendVisualSet(set, visualManager) {
+        this.set = set;
+        this.visualManager = visualManager;
+
+        this.visualList = $('<ul class="n2-list n2-h4"></ul>');
+
+
+        this.visualManager.sets[set.id] = this;
+        if (set.referencekey != '') {
+            this.visualManager.setsByReference[set.referencekey] = set;
+        }
+
+        this.option = $('<option value="' + set.id + '">' + set.value + '</option>')
+            .appendTo(this.visualManager.setsSelector);
+    };
+
+
+    NextendVisualSet.prototype.active = function () {
+        $.when(this._loadVisuals())
+            .done($.proxy(function () {
+                this.visualList.appendTo(this.visualManager.visualListContainer);
+            }, this));
+    };
+
+    NextendVisualSet.prototype.notActive = function () {
+        this.visualList.detach();
+    };
+
+    NextendVisualSet.prototype.loadVisuals = function (visuals) {
+        if (typeof this.visuals === 'undefined') {
+            this.visuals = {};
+            for (var i = 0; i < visuals.length; i++) {
+                this.addVisual(visuals[i]);
+            }
+        }
+    };
+
+    NextendVisualSet.prototype._loadVisuals = function () {
+        if (this.visuals == null) {
+            return NextendAjaxHelper.ajax({
+                type: "POST",
+                url: NextendAjaxHelper.makeAjaxUrl(this.visualManager.parameters.ajaxUrl, {
+                    nextendaction: 'loadVisualsForSet'
+                }),
+                data: {
+                    setId: this.set.id
+                },
+                dataType: 'json'
+            })
+                .done($.proxy(function (response) {
+                    this.loadVisuals(response.data.visuals);
+                }, this));
+        }
+        return true;
+    };
+
+    NextendVisualSet.prototype.addVisual = function (visual) {
+        if (typeof this.visuals[visual.id] === 'undefined') {
+            this.visuals[visual.id] = this.visualManager.createVisual(visual, this);
+            this.visualList.append(this.visuals[visual.id].createRow());
+        }
+        return this.visuals[visual.id];
+    };
+
+    NextendVisualSet.prototype.rename = function (name) {
+        this.set.value = name;
+        this.option.html(name);
+    };
+
+    NextendVisualSet.prototype.delete = function () {
+        this.option.remove();
+        delete this.visualManager.sets[this.set.id];
+    };
+
+    scope.NextendVisualSet = NextendVisualSet;
+
+})(n2, window);
+;
+(function ($, scope) {
+
     function NextendStyleManager() {
         NextendVisualManagerSetsAndMore.prototype.constructor.apply(this, arguments);
         this.setFontSize(14);
@@ -4493,6 +4981,1283 @@
 
 })
 (n2, window);
+
+;
+(function ($, scope) {
+
+    function NextendVisualManagerCore(parameters) {
+        this.loadDefaults();
+
+        this.$ = $(this);
+
+        window.nextend[this.type + 'Manager'] = this;
+
+        this.modals = this.initModals();
+
+        this.lightbox = $('#n2-lightbox-' + this.type);
+
+        this.notificationStack = new NextendNotificationCenterStack(this.lightbox.find('.n2-top-bar'));
+
+        this.visualListContainer = this.lightbox.find('.n2-lightbox-sidebar-list');
+
+        this.parameters = parameters;
+
+        this.visuals = {};
+
+        this.controller = this.initController();
+        if (this.controller) {
+            this.renderer = this.controller.renderer;
+        }
+
+        this.firstLoadVisuals(parameters.visuals);
+
+        $('.n2-' + this.type + '-save-as-new')
+            .on('click', $.proxy(this.saveAsNew, this));
+
+        this.cancelButton = $('#n2-' + this.type + '-editor-cancel')
+            .on('click', $.proxy(this.hide, this));
+
+        this.saveButton = $('#n2-' + this.type + '-editor-save')
+            .off('click')
+            .on('click', $.proxy(this.setVisual, this));
+    };
+
+    NextendVisualManagerCore.prototype.setTitle = function (title) {
+        this.lightbox.find('.n2-logo').html(title);
+    };
+
+    NextendVisualManagerCore.prototype.loadDefaults = function () {
+        this.mode = 'linked';
+        this.labels = {
+            visual: n2_('visual'),
+            visuals: n2_('visuals')
+        };
+        this.visualLoadDeferreds = {};
+        this.showParameters = false;
+    }
+
+
+    NextendVisualManagerCore.prototype.initModals = function () {
+        return new NextendVisualManagerModals(this);
+    };
+
+    NextendVisualManagerCore.prototype.firstLoadVisuals = function (visuals) {
+
+        for (var k in visuals) {
+            this.sets[k].loadVisuals(visuals[k]);
+        }
+    };
+
+    NextendVisualManagerCore.prototype.initController = function () {
+
+    };
+
+    NextendVisualManagerCore.prototype.getVisual = function (id) {
+        if (parseInt(id) > 0) {
+            if (typeof this.visuals[id] !== 'undefined') {
+                return this.visuals[id];
+            } else if (typeof this.visualLoadDeferreds[id] !== 'undefined') {
+                return this.visualLoadDeferreds[id];
+            } else {
+                var deferred = $.Deferred();
+                this.visualLoadDeferreds[id] = deferred;
+                this._loadVisualFromServer(id)
+                    .done($.proxy(function () {
+                        deferred.resolve(this.visuals[id]);
+                        delete this.visualLoadDeferreds[id];
+                    }, this))
+                    .fail($.proxy(function () {
+                        // This visual is Empty!!!
+                        deferred.resolve({
+                            id: -1,
+                            name: n2_('Empty')
+                        });
+                        delete this.visualLoadDeferreds[id];
+                    }, this));
+                return deferred;
+            }
+        } else {
+            try {
+                JSON.parse(Base64.decode(id));
+                return {
+                    id: 0,
+                    name: n2_('Static')
+                };
+            } catch (e) {
+                // This visual is Empty!!!
+                return {
+                    id: -1,
+                    name: n2_('Empty')
+                };
+            }
+        }
+    };
+
+    NextendVisualManagerCore.prototype._loadVisualFromServer = function (visualId) {
+        return NextendAjaxHelper.ajax({
+            type: "POST",
+            url: NextendAjaxHelper.makeAjaxUrl(this.parameters.ajaxUrl, {
+                nextendaction: 'loadVisual'
+            }),
+            data: {
+                visualId: visualId
+            },
+            dataType: 'json'
+        })
+            .done($.proxy(function (response) {
+                n2c.error('@todo: load the visual data!');
+            }, this));
+    };
+
+    NextendVisualManagerCore.prototype.show = function (data, saveCallback, showParameters) {
+
+        NextendEsc.add($.proxy(function () {
+            this.hide();
+            return true;
+        }, this));
+
+        this.notificationStack.enableStack();
+
+        this.showParameters = $.extend({
+            previewMode: false,
+            previewHTML: false
+        }, showParameters);
+
+        $('body').css('overflow', 'hidden');
+        this.lightbox.css('display', 'block');
+        $(window)
+            .on('resize.' + this.type + 'Manager', $.proxy(this.resize, this));
+        this.resize();
+
+        this.loadDataToController(data);
+        this.controller.show();
+
+        this.$.on('save', saveCallback);
+    };
+
+    NextendVisualManagerCore.prototype.setAndClose = function (data) {
+        this.$.trigger('save', [data]);
+    };
+
+    NextendVisualManagerCore.prototype.hide = function (e) {
+        this.controller.pause();
+        this.notificationStack.popStack();
+        if (typeof e !== 'undefined') {
+            e.preventDefault();
+            NextendEsc.pop();
+        }
+        this.controller.close();
+        this.$.off('save');
+        $(window).off('resize.' + this.type + 'Manager');
+        $('body').css('overflow', '');
+        this.lightbox.css('display', 'none');
+    };
+
+    NextendVisualManagerCore.prototype.resize = function () {
+        var h = this.lightbox.height();
+        var sidebar = this.lightbox.find('.n2-sidebar');
+        sidebar.find('.n2-lightbox-sidebar-list').height(h - 1 - sidebar.find('.n2-logo').outerHeight() - sidebar.find('.n2-sidebar-row').outerHeight() - sidebar.find('.n2-save-as-new-container').parent().height());
+
+        var contentArea = this.lightbox.find('.n2-content-area');
+        contentArea.height(h - 1 - contentArea.siblings('.n2-top-bar, .n2-table').outerHeight());
+    };
+
+    NextendVisualManagerCore.prototype.loadDataToController = function (data) {
+        if (this.isVisualData(data)) {
+            $.when(this.getVisual(data)).done($.proxy(function (visual) {
+                if (visual.id > 0) {
+                    visual.activate();
+                } else {
+                    console.error(data + ' visual is not found linked');
+                }
+            }, this));
+        } else {
+            console.error(data + ' visual not found');
+        }
+    };
+
+    NextendVisualManagerCore.prototype.isVisualData = function (data) {
+        return parseInt(data) > 0;
+    };
+
+    NextendVisualManagerCore.prototype.setVisual = function (e) {
+        e.preventDefault();
+        switch (this.mode) {
+            case 0:
+                break;
+            case 'static':
+                this.modals.getLinkedOverwriteOrSaveAs()
+                    .show('saveAsNew');
+                break;
+            case 'linked':
+            default:
+                if (this.activeVisual) {
+                    if (this.activeVisual.compare(this.controller.get('set'))) {
+                        //if (this.getBase64(this.activeVisual.name) == this.activeVisual.base64) {
+                        this.setAndClose(this.activeVisual.id);
+                        this.hide(e);
+                    } else {
+
+                        if (this.activeVisual && !this.activeVisual.isEditable()) {
+                            this.modals.getLinkedOverwriteOrSaveAs()
+                                .show('saveAsNew');
+                        } else {
+                            this.modals.getLinkedOverwriteOrSaveAs()
+                                .show();
+                        }
+                    }
+                } else {
+                    this.modals.getLinkedOverwriteOrSaveAs()
+                        .show('saveAsNew');
+                }
+                break;
+        }
+    };
+
+    NextendVisualManagerCore.prototype.saveAsNew = function (e) {
+        e.preventDefault();
+
+        this.modals.getSaveAs()
+            .show();
+    };
+
+    NextendVisualManagerCore.prototype._saveAsNew = function (name) {
+        return NextendAjaxHelper.ajax({
+            type: "POST",
+            url: NextendAjaxHelper.makeAjaxUrl(this.parameters.ajaxUrl, {
+                nextendaction: 'addVisual'
+            }),
+            data: {
+                setId: this.setsSelector.val(),
+                value: Base64.encode(JSON.stringify({
+                    name: name,
+                    data: this.controller.get('saveAsNew')
+                }))
+            },
+            dataType: 'json'
+        })
+            .done($.proxy(function (response) {
+                var visual = response.data.visual;
+                this.changeActiveVisual(this.sets[visual.referencekey].addVisual(visual));
+            }, this));
+    };
+
+    NextendVisualManagerCore.prototype.saveActiveVisual = function (name) {
+
+        return NextendAjaxHelper.ajax({
+            type: "POST",
+            url: NextendAjaxHelper.makeAjaxUrl(this.parameters.ajaxUrl, {
+                nextendaction: 'changeVisual'
+            }),
+            data: {
+                visualId: this.activeVisual.id,
+                value: this.getBase64(name)
+            },
+            dataType: 'json'
+        }).done($.proxy(function (response) {
+            this.activeVisual.setValue(response.data.visual.value, true);
+        }, this));
+    };
+
+    NextendVisualManagerCore.prototype.changeActiveVisual = function (visual) {
+        if (this.activeVisual) {
+            this.activeVisual.notActive();
+            this.activeVisual = false;
+        }
+        if (visual /*&& (this.mode == 0 || this.mode == 'linked')*/) {
+            if (this.mode == 'static') {
+                this.setMode('linked');
+            }
+            visual.active();
+            this.activeVisual = visual;
+        }
+    };
+
+    NextendVisualManagerCore.prototype.getBase64 = function (name) {
+
+        return Base64.encode(JSON.stringify({
+            name: name,
+            data: this.controller.get('set')
+        }));
+    };
+
+    NextendVisualManagerCore.prototype.removeRules = function (mode, visual) {
+        this.renderer.deleteRules(mode, this.parameters.renderer.pre, '.' + this.getClass(visual.id, mode));
+    };
+
+    scope.NextendVisualManagerCore = NextendVisualManagerCore;
+
+    /**
+     * Sets are visible
+     */
+    function NextendVisualManagerVisibleSets() {
+        NextendVisualManagerCore.prototype.constructor.apply(this, arguments);
+    }
+
+    NextendVisualManagerVisibleSets.prototype = Object.create(NextendVisualManagerCore.prototype);
+    NextendVisualManagerVisibleSets.prototype.constructor = NextendVisualManagerVisibleSets;
+
+    NextendVisualManagerVisibleSets.prototype.firstLoadVisuals = function (visuals) {
+        this.sets = {};
+        this.setsByReference = {};
+
+        this.setsSelector = $('#' + this.parameters.setsIdentifier + 'sets_select');
+        for (var i = 0; i < this.parameters.sets.length; i++) {
+            this.newVisualSet(this.parameters.sets[i]);
+        }
+        this.initSetsManager();
+
+        for (var k in visuals) {
+            this.sets[k].loadVisuals(visuals[k])
+        }
+
+        this.activeSet = this.sets[this.setsSelector.val()];
+        this.activeSet.active();
+
+        this.setsSelector.on('change', $.proxy(function () {
+            this.activeSet.notActive();
+            this.activeSet = this.sets[this.setsSelector.val()];
+            this.activeSet.active();
+        }, this));
+    };
+
+
+    NextendVisualManagerVisibleSets.prototype.initSetsManager = function () {
+        new NextendVisualSetsManager(this);
+    };
+
+    NextendVisualManagerVisibleSets.prototype._loadVisualFromServer = function (visualId) {
+        return NextendAjaxHelper.ajax({
+            type: "POST",
+            url: NextendAjaxHelper.makeAjaxUrl(this.parameters.ajaxUrl, {
+                nextendaction: 'loadSetByVisualId'
+            }),
+            data: {
+                visualId: visualId
+            },
+            dataType: 'json'
+        })
+            .done($.proxy(function (response) {
+                this.sets[response.data.set.setId].loadVisuals(response.data.set.visuals);
+
+            }, this));
+    };
+
+    NextendVisualManagerVisibleSets.prototype.changeSet = function (setId) {
+        if (this.setsSelector.val() != setId) {
+            this.setsSelector.val(setId)
+                .trigger('change');
+        }
+    };
+
+    NextendVisualManagerVisibleSets.prototype.changeSetById = function (id) {
+        if (typeof this.sets[id] !== 'undefined') {
+            this.changeSet(id);
+        }
+    };
+
+    NextendVisualManagerVisibleSets.prototype.newVisualSet = function (set) {
+        return new NextendVisualSet(set, this);
+    };
+
+    scope.NextendVisualManagerVisibleSets = NextendVisualManagerVisibleSets;
+
+    /**
+     * Sets are editable
+     * Ex.: Layout
+     */
+    function NextendVisualManagerEditableSets() {
+        NextendVisualManagerVisibleSets.prototype.constructor.apply(this, arguments);
+    }
+
+    NextendVisualManagerEditableSets.prototype = Object.create(NextendVisualManagerVisibleSets.prototype);
+    NextendVisualManagerEditableSets.prototype.constructor = NextendVisualManagerEditableSets;
+
+    NextendVisualManagerEditableSets.prototype.initSetsManager = function () {
+        new NextendVisualSetsManagerEditable(this);
+    };
+
+    scope.NextendVisualManagerEditableSets = NextendVisualManagerEditableSets;
+
+    /**
+     * Static and linked mode
+     * Ex.: Style, Fonts, Animation
+     */
+
+    function NextendVisualManagerSetsAndMore() {
+        NextendVisualManagerEditableSets.prototype.constructor.apply(this, arguments);
+
+        this.linkedButton = $('#n2-' + this.type + '-editor-set-as-linked');
+        this.setMode(0);
+    }
+
+    NextendVisualManagerSetsAndMore.prototype = Object.create(NextendVisualManagerEditableSets.prototype);
+    NextendVisualManagerSetsAndMore.prototype.constructor = NextendVisualManagerSetsAndMore;
+
+
+    NextendVisualManagerSetsAndMore.prototype.setMode = function (newMode) {
+        if (newMode == 'static') {
+            this.changeActiveVisual(null);
+        }
+        if (this.mode != newMode) {
+            switch (newMode) {
+                case 0:
+                    //this.modeRadio.parent.css('display', 'none');
+                    this.cancelButton.css('display', 'none');
+                    this.saveButton
+                        .off('click');
+                    break;
+
+                case 'static':
+                default:
+                    this.cancelButton.css('display', 'inline-block');
+                    this.saveButton
+                        .off('click')
+                        .on('click', $.proxy(this.setVisualAsStatic, this));
+                    this.linkedButton
+                        .off('click')
+                        .on('click', $.proxy(this.setVisualAsLinked, this));
+                    break;
+            }
+            this.mode = newMode;
+        }
+    };
+
+    NextendVisualManagerSetsAndMore.prototype.loadDataToController = function (data) {
+        if (parseInt(data) > 0) {
+            $.when(this.getVisual(data)).done($.proxy(function (visual) {
+                if (visual.id > 0) {
+                    this.setMode('linked');
+                    visual.activate();
+                } else {
+                    this.setMode('static');
+                    this.controller.load('', false, this.showParameters);
+                }
+            }, this));
+        } else {
+            var visualData = '';
+            this.setMode('static');
+            try {
+                visualData = this.getStaticData(data);
+            } catch (e) {
+                // This visual is Empty!!!
+            }
+            this.controller.load(visualData, false, this.showParameters);
+        }
+    };
+
+    NextendVisualManagerSetsAndMore.prototype.getStaticData = function (data) {
+        var d = JSON.parse(Base64.decode(data)).data;
+        if (typeof d === 'undefined') {
+            return '';
+        }
+        return d;
+    };
+
+    NextendVisualManagerSetsAndMore.prototype.setVisualAsLinked = function (e) {
+        this.setVisual(e);
+    };
+
+    NextendVisualManagerSetsAndMore.prototype.setVisualAsStatic = function (e) {
+        e.preventDefault();
+        this.setAndClose(this.getBase64(n2_('Static')));
+        this.hide(e);
+    };
+
+    scope.NextendVisualManagerSetsAndMore = NextendVisualManagerSetsAndMore;
+
+
+    /**
+     * Multiple selection
+     * Ex.: Background animation, Post background animation
+     */
+
+    function NextendVisualManagerMultipleSelection(parameters) {
+
+        window.nextend[this.type + 'Manager'] = this;
+
+        // Push the constructor to the first show as an optimization.
+        this._lateInit = $.proxy(function (parameters) {
+            NextendVisualManagerVisibleSets.prototype.constructor.call(this, parameters);
+        }, this, parameters);
+
+    }
+
+    NextendVisualManagerMultipleSelection.prototype = Object.create(NextendVisualManagerVisibleSets.prototype);
+    NextendVisualManagerMultipleSelection.prototype.constructor = NextendVisualManagerMultipleSelection;
+
+
+    NextendVisualManagerMultipleSelection.prototype.lateInit = function () {
+        if (!this.inited) {
+            this.inited = true;
+
+            this._lateInit();
+        }
+    };
+
+    NextendVisualManagerMultipleSelection.prototype.show = function (data, saveCallback, controllerParameters) {
+
+        this.lateInit();
+
+        this.notificationStack.enableStack();
+
+        NextendEsc.add($.proxy(function () {
+            this.hide();
+            return true;
+        }, this));
+
+        $('body').css('overflow', 'hidden');
+        this.lightbox.css('display', 'block');
+        $(window)
+            .on('resize.' + this.type + 'Manager', $.proxy(this.resize, this));
+        this.resize();
+
+        var i = 0;
+        if (data != '') {
+            var selected = data.split('||'),
+                hasSelected = false;
+            for (; i < selected.length; i++) {
+                $.when(this.getVisual(selected[i])).done(function (visual) {
+                    if (visual && visual.check) {
+                        visual.check();
+                        if (!hasSelected) {
+                            hasSelected = true;
+                            visual.activate();
+                        }
+                    }
+                });
+            }
+        }
+
+        this.$.on('save', saveCallback);
+
+        this.controller.start(controllerParameters);
+
+        if (i == 0) {
+            $.when(this.activeSet._loadVisuals())
+                .done($.proxy(function () {
+                    for (var k in this.activeSet.visuals) {
+                        this.activeSet.visuals[k].activate();
+                        break;
+                    }
+                }, this));
+        }
+    };
+
+    NextendVisualManagerMultipleSelection.prototype.setVisual = function (e) {
+        e.preventDefault();
+        this.setAndClose(this.getAsString());
+        this.hide(e);
+    };
+
+    NextendVisualManagerMultipleSelection.prototype.getAsString = function () {
+        var selected = [];
+        for (var k in this.sets) {
+            var set = this.sets[k];
+            for (var i in set.visuals) {
+                if (set.visuals[i].checked) {
+                    selected.push(set.visuals[i].id);
+                }
+            }
+        }
+        if (selected.length == 0 && this.activeVisual) {
+            selected.push(this.activeVisual.id);
+        }
+        return selected.join('||');
+    };
+
+    NextendVisualManagerMultipleSelection.prototype.hide = function (e) {
+        NextendVisualManagerVisibleSets.prototype.hide.apply(this, arguments);
+
+        for (var k in this.sets) {
+            var set = this.sets[k];
+            for (var i in set.visuals) {
+                set.visuals[i].unCheck();
+            }
+        }
+    };
+
+    scope.NextendVisualManagerMultipleSelection = NextendVisualManagerMultipleSelection;
+
+
+    function NextendVisualCore(visual, visualManager) {
+        this.id = visual.id;
+        this.visualManager = visualManager;
+        this.setValue(visual.value, false);
+        this.visual = visual;
+        this.visualManager.visuals[this.id] = this;
+    };
+
+    NextendVisualCore.prototype.compare = function (value) {
+
+        var length = Math.max(this.value.length, value.length);
+        for (var i = 0; i < length; i++) {
+            if (!this._compareTab(typeof this.value[i] === 'undefined' ? {} : this.value[i], typeof value[i] === 'undefined' ? {} : value[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    NextendVisualCore.prototype._compareTab = function (a, b) {
+        var aProps = Object.getOwnPropertyNames(a);
+        var bProps = Object.getOwnPropertyNames(b);
+        if (a.length === 0 && bProps.length === 0) {
+            return true;
+        }
+
+        if (aProps.length != bProps.length) {
+            return false;
+        }
+
+        for (var i = 0; i < aProps.length; i++) {
+            var propName = aProps[i];
+
+            // If values of same property are not equal,
+            // objects are not equivalent
+            if (a[propName] !== b[propName]) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    NextendVisualCore.prototype.setValue = function (value, render) {
+        var data = null;
+        if (typeof value == 'string') {
+            this.base64 = value;
+            data = JSON.parse(Base64.decode(value));
+        } else {
+            data = value;
+        }
+        this.name = data.name;
+        this.value = data.data;
+
+        if (render) {
+            this.render();
+        }
+    };
+
+    NextendVisualCore.prototype.isSystem = function () {
+        return (this.visual.system == 1);
+    };
+
+    NextendVisualCore.prototype.isEditable = function () {
+        return (this.visual.editable == 1);
+    };
+
+    NextendVisualCore.prototype.activate = function (e) {
+        if (typeof e !== 'undefined') {
+            e.preventDefault();
+        }
+        this.visualManager.changeActiveVisual(this);
+        this.visualManager.controller.load(this.value, false, this.visualManager.showParameters);
+    };
+
+    NextendVisualCore.prototype.active = function () {
+    };
+
+    NextendVisualCore.prototype.notActive = function () {
+    };
+
+    NextendVisualCore.prototype.delete = function (e) {
+        if (e) {
+            e.preventDefault();
+        }
+        NextendDeleteModal('n2-visual', this.name, $.proxy(function () {
+            this._delete();
+        }, this));
+    };
+    NextendVisualCore.prototype._delete = function () {
+
+        return NextendAjaxHelper.ajax({
+            type: "POST",
+            url: NextendAjaxHelper.makeAjaxUrl(this.visualManager.parameters.ajaxUrl, {
+                nextendaction: 'deleteVisual'
+            }),
+            data: {
+                visualId: this.id
+            },
+            dataType: 'json'
+        })
+            .done($.proxy(function (response) {
+                var visual = response.data.visual;
+
+                if (this.visualManager.activeVisual && this.id == this.visualManager.activeVisual.id) {
+                    this.visualManager.changeActiveVisual(null);
+                }
+                this.removeRules();
+                delete this.visualManager.visuals[this.id];
+                delete this.set.visuals[this.id];
+                this.row.remove();
+                this.visualManager.$.trigger('visualDelete', [this.id]);
+            }, this));
+    };
+
+    NextendVisualCore.prototype.removeRules = function () {
+
+    };
+
+    NextendVisualCore.prototype.render = function () {
+
+    };
+
+    NextendVisualCore.prototype.isUsed = function () {
+        return false;
+    };
+
+    scope.NextendVisualCore = NextendVisualCore;
+
+    function NextendVisualWithSet(visual, set, visualManager) {
+        this.set = set;
+        NextendVisualCore.prototype.constructor.call(this, visual, visualManager);
+    };
+
+    NextendVisualWithSet.prototype = Object.create(NextendVisualCore.prototype);
+    NextendVisualWithSet.prototype.constructor = NextendVisualWithSet;
+
+    NextendVisualWithSet.prototype.active = function () {
+        var setId = this.set.set.id;
+        this.visualManager.changeSet(setId);
+
+        NextendVisualCore.prototype.active.call(this);
+    };
+
+    scope.NextendVisualWithSet = NextendVisualWithSet;
+
+
+    function NextendVisualWithSetRow() {
+        NextendVisualWithSet.prototype.constructor.apply(this, arguments);
+    };
+
+    NextendVisualWithSetRow.prototype = Object.create(NextendVisualWithSet.prototype);
+    NextendVisualWithSetRow.prototype.constructor = NextendVisualWithSetRow;
+
+
+    NextendVisualWithSetRow.prototype.createRow = function () {
+        this.row = $('<li></li>')
+            .append($('<a href="#">' + this.name + '</a>')
+                .on('click', $.proxy(this.activate, this)));
+        if (!this.isSystem()) {
+            this.row.append($('<span class="n2-actions"></span>')
+                .append($('<a href="#"><i class="n2-i n2-i-delete n2-i-grey-opacity"></i></a>')
+                    .on('click', $.proxy(this.delete, this))));
+        }
+        return this.row;
+    };
+
+    NextendVisualWithSetRow.prototype.setValue = function (value, render) {
+        NextendVisualWithSet.prototype.setValue.call(this, value, render);
+
+        if (this.row) {
+            this.row.find('> a').html(this.name);
+        }
+    };
+
+    NextendVisualWithSetRow.prototype.active = function () {
+        this.row.addClass('n2-active');
+        NextendVisualWithSet.prototype.active.call(this);
+    };
+
+    NextendVisualWithSetRow.prototype.notActive = function () {
+        this.row.removeClass('n2-active');
+        NextendVisualWithSet.prototype.notActive.call(this);
+    };
+
+    scope.NextendVisualWithSetRow = NextendVisualWithSetRow;
+
+
+    function NextendVisualWithSetRowMultipleSelection(visual, set, visualManager) {
+        this.checked = false;
+        visual.system = 1;
+        visual.editable = 0;
+        NextendVisualWithSetRow.prototype.constructor.apply(this, arguments);
+    };
+
+    NextendVisualWithSetRowMultipleSelection.prototype = Object.create(NextendVisualWithSetRow.prototype);
+    NextendVisualWithSetRowMultipleSelection.prototype.constructor = NextendVisualWithSetRowMultipleSelection;
+
+
+    NextendVisualWithSetRowMultipleSelection.prototype.createRow = function () {
+        var row = NextendVisualWithSetRow.prototype.createRow.call(this);
+        this.checkbox = $('<div class="n2-list-checkbox"><i class="n2-i n2-i-tick"></i></div>')
+            .on('click', $.proxy(this.checkOrUnCheck, this))
+            .prependTo(row.find('a'));
+
+        return row;
+    };
+
+    NextendVisualWithSetRowMultipleSelection.prototype.setValue = function (data, render) {
+        this.name = data.name;
+        this.value = data.data;
+        if (this.row) {
+            this.row.find('> a').html(this.name);
+        }
+
+        if (render) {
+            this.render();
+        }
+    };
+
+    NextendVisualWithSetRowMultipleSelection.prototype.activate = function (e) {
+        if (typeof e !== 'undefined') {
+            e.preventDefault();
+        }
+        this.visualManager.changeActiveVisual(this);
+        this.visualManager.controller.setAnimationProperties(this.value);
+    };
+
+    NextendVisualWithSetRowMultipleSelection.prototype.checkOrUnCheck = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.checked) {
+            this.unCheck();
+        } else {
+            this.check();
+        }
+    };
+
+    NextendVisualWithSetRowMultipleSelection.prototype.check = function () {
+        this.checked = true;
+        this.checkbox.addClass('n2-active');
+        this.activate();
+    };
+
+    NextendVisualWithSetRowMultipleSelection.prototype.unCheck = function () {
+        this.checked = false;
+        this.checkbox.removeClass('n2-active');
+        this.activate();
+    };
+
+    scope.NextendVisualWithSetRowMultipleSelection = NextendVisualWithSetRowMultipleSelection;
+
+})(n2, window);
+
+(function ($, scope) {
+    "use strict";
+    function NextendVisualEditorControllerBase() {
+        this.loadDefaults();
+        this.lightbox = $('#n2-lightbox-' + this.type);
+    }
+
+    NextendVisualEditorControllerBase.prototype.loadDefaults = function () {
+        this.type = '';
+        this._style = false;
+        this.isChanged = false;
+        this.visible = false;
+    };
+
+    NextendVisualEditorControllerBase.prototype.init = function () {
+        this.lightbox = $('#n2-lightbox-' + this.type);
+    };
+
+
+    NextendVisualEditorControllerBase.prototype.pause = function () {
+
+    };
+
+    NextendVisualEditorControllerBase.prototype.getEmptyVisual = function () {
+        return [];
+    };
+
+    NextendVisualEditorControllerBase.prototype.get = function () {
+        return this.currentVisual;
+    };
+
+    NextendVisualEditorControllerBase.prototype.load = function (visual, tabs, parameters) {
+        this.isChanged = false;
+        this.lightbox.addClass('n2-editor-loaded');
+        if (visual == '') {
+            visual = this.getEmptyVisual();
+        }
+        this._load(visual, tabs, parameters);
+    };
+
+    NextendVisualEditorControllerBase.prototype._load = function (visual, tabs, parameters) {
+        this.currentVisual = $.extend(true, {}, visual);
+    };
+
+    NextendVisualEditorControllerBase.prototype.addStyle = function (style) {
+        if (this._style) {
+            this._style.remove();
+        }
+        this._style = $("<style>" + style + "</style>").appendTo("head");
+    };
+
+    NextendVisualEditorControllerBase.prototype.show = function () {
+        this.visible = true;
+    };
+
+    NextendVisualEditorControllerBase.prototype.close = function () {
+        this.visible = false;
+    };
+    scope.NextendVisualEditorControllerBase = NextendVisualEditorControllerBase;
+
+    function NextendVisualEditorControllerWithEditor() {
+
+        NextendVisualEditorControllerBase.prototype.constructor.apply(this, arguments);
+
+        this.editor = this.initEditor();
+        this.editor.$.on('change', $.proxy(this.propertyChanged, this));
+    };
+
+
+    NextendVisualEditorControllerWithEditor.prototype = Object.create(NextendVisualEditorControllerBase.prototype);
+    NextendVisualEditorControllerWithEditor.prototype.constructor = NextendVisualEditorControllerWithEditor;
+
+
+    NextendVisualEditorControllerWithEditor.prototype.initEditor = function () {
+        return new NextendVisualEditor();
+    };
+
+    NextendVisualEditorControllerWithEditor.prototype.propertyChanged = function (e, property, value) {
+        this.isChanged = true;
+        this.currentVisual[property] = value;
+    };
+
+    NextendVisualEditorControllerWithEditor.prototype._load = function (visual, tabs, parameters) {
+        NextendVisualEditorControllerBase.prototype._load.apply(this, arguments);
+        this.loadToEditor();
+    };
+
+    NextendVisualEditorControllerWithEditor.prototype.loadToEditor = function () {
+        this.editor.load(this.currentVisual);
+    };
+
+    scope.NextendVisualEditorControllerWithEditor = NextendVisualEditorControllerWithEditor;
+
+
+    function NextendVisualEditorController(previewModesList) {
+        NextendVisualEditorControllerWithEditor.prototype.constructor.apply(this, arguments);
+
+        this.previewModesList = previewModesList;
+
+        this.initPreviewModes();
+        if (previewModesList) {
+
+            this.renderer = this.initRenderer();
+
+            this.clearTabButton = this.lightbox.find('.n2-editor-clear-tab')
+                .on('click', $.proxy(this.clearCurrentTab, this));
+
+
+            this.tabField = new NextendElementRadio('n2-' + this.type + '-editor-tabs', ['0']);
+            this.tabField.element.on('nextendChange.n2-editor', $.proxy(this.tabChanged, this));
+
+            this.previewModeField = new NextendElementRadio('n2-' + this.type + '-editor-preview-mode', ['0']);
+            this.previewModeField.element.on('nextendChange.n2-editor', $.proxy(this.previewModeChanged, this));
+
+            this.previewModeField.options.eq(0).html(this.previewModesList[0].label);
+        }
+    }
+
+    NextendVisualEditorController.prototype = Object.create(NextendVisualEditorControllerWithEditor.prototype);
+    NextendVisualEditorController.prototype.constructor = NextendVisualEditorController;
+
+    NextendVisualEditorController.prototype.loadDefaults = function () {
+        NextendVisualEditorControllerWithEditor.prototype.loadDefaults.call(this);
+
+        this.currentPreviewMode = '0';
+        this.currentTabIndex = 0;
+        this._renderTimeout = 0;
+        this._delayStart = 0;
+    };
+
+    NextendVisualEditorController.prototype.initPreviewModes = function () {
+    };
+
+    NextendVisualEditorController.prototype.initRenderer = function () {
+    };
+
+    NextendVisualEditorController.prototype._load = function (visual, tabs, parameters) {
+
+        this.currentVisual = [];
+        for (var i = 0; i < visual.length; i++) {
+            this.currentVisual[i] = $.extend(true, this.getCleanVisual(), visual[i]);
+        }
+
+        this.localModePreview = {};
+        if (parameters.previewMode === false) {
+            this.availablePreviewMode = false;
+        } else {
+            this.availablePreviewMode = parameters.previewMode;
+            if (tabs === false) {
+                tabs = this.getTabs();
+            }
+            for (var i = this.currentVisual.length; i < tabs.length; i++) {
+                this.currentVisual[i] = this.getCleanVisual();
+            }
+            if (parameters.previewHTML !== false && parameters.previewHTML != '') {
+                this.localModePreview[parameters.previewMode] = parameters.previewHTML;
+            }
+        }
+
+        this.currentTabs = tabs;
+
+        if (tabs === false) {
+            tabs = [];
+            for (var i = 0; i < this.currentVisual.length; i++) {
+                tabs.push('#' + i);
+            }
+        }
+
+        this.setTabs(tabs);
+    };
+
+    NextendVisualEditorController.prototype.getCleanVisual = function () {
+        return {};
+    };
+
+    NextendVisualEditorController.prototype.getTabs = function () {
+        return this.previewModesList[this.availablePreviewMode].tabs;
+    };
+
+    NextendVisualEditorController.prototype.setTabs = function (labels) {
+        this.tabField.insideChange('0');
+        for (var i = this.tabField.values.length - 1; i > 0; i--) {
+            this.tabField.removeTabOption(this.tabField.values[i]);
+        }
+        this.tabField.options.eq(0).html(labels[0]);
+        for (var i = 1; i < labels.length; i++) {
+            this.tabField.addTabOption(i + '', labels[i]);
+        }
+
+        this.makePreviewModes();
+    };
+
+    NextendVisualEditorController.prototype.tabChanged = function () {
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
+
+        var tab = this.tabField.element.val();
+
+        this.currentTabIndex = tab;
+        if (typeof this.currentVisual[tab] === 'undefined') {
+            this.currentVisual[tab] = {};
+        }
+        var values = $.extend({}, this.currentVisual[0]);
+        if (tab != 0) {
+            $.extend(values, this.currentVisual[tab]);
+            this.clearTabButton.css('display', '');
+        } else {
+            this.clearTabButton.css('display', 'none');
+        }
+
+        this.editor.load(values);
+        this._tabChanged();
+    };
+
+    NextendVisualEditorController.prototype._tabChanged = function () {
+        this._renderPreview();
+    };
+
+    NextendVisualEditorController.prototype.clearCurrentTab = function (e) {
+        if (e) {
+            e.preventDefault();
+        }
+        this.currentVisual[this.currentTabIndex] = {};
+        this.tabChanged();
+        this._renderPreview();
+    };
+
+    NextendVisualEditorController.prototype.makePreviewModes = function () {
+        var modes = [];
+        // Show all preview mode for the tab count
+        if (this.availablePreviewMode === false) {
+            var tabCount = this.tabField.options.length;
+            if (typeof this.previewModes[tabCount] !== "undefined") {
+                modes = this.previewModes[tabCount];
+            }
+            this.setPreviewModes(modes);
+        } else {
+            modes = [this.previewModesList[this.availablePreviewMode]];
+            this.setPreviewModes(modes, this.availablePreviewMode);
+        }
+    };
+
+    NextendVisualEditorController.prototype.setPreviewModes = function (modes, defaultMode) {
+        for (var i = this.previewModeField.values.length - 1; i > 0; i--) {
+            this.previewModeField.removeTabOption(this.previewModeField.values[i]);
+        }
+        for (var i = 0; i < modes.length; i++) {
+            this.previewModeField.addTabOption(modes[i].id, modes[i].label);
+        }
+        if (typeof defaultMode === 'undefined') {
+            defaultMode = '0';
+        }
+        this.previewModeField.insideChange(defaultMode);
+    };
+
+    NextendVisualEditorController.prototype.previewModeChanged = function () {
+        var mode = this.previewModeField.element.val();
+
+        if (this.currentTabs === false) {
+            if (mode == 0) {
+                for (var i = 0; i < this.currentVisual.length; i++) {
+                    this.tabField.options.eq(i).html('#' + i);
+                }
+            } else {
+                var tabs = this.previewModesList[mode].tabs;
+                if (tabs) {
+                    for (var i = 0; i < this.currentVisual.length; i++) {
+                        this.tabField.options.eq(i).html(tabs[i]);
+                    }
+                }
+            }
+        }
+        this.currentPreviewMode = mode;
+        this._renderPreview();
+
+        this.setPreview(mode);
+    };
+
+    NextendVisualEditorController.prototype.setPreview = function (mode) {
+    };
+
+    NextendVisualEditorController.prototype.propertyChanged = function (e, property, value) {
+        this.isChanged = true;
+        this.currentVisual[this.currentTabIndex][property] = value;
+        this.renderPreview();
+    };
+
+    NextendVisualEditorController.prototype.renderPreview = function () {
+        var now = $.now();
+        if (this._renderTimeout) {
+            clearTimeout(this._renderTimeout);
+            if (now - this._delayStart > 100) {
+                this._renderPreview();
+                this._delayStart = now;
+            }
+        } else {
+            this._delayStart = now;
+        }
+        this._renderTimeout = setTimeout($.proxy(this._renderPreview, this), 33);
+    };
+
+    NextendVisualEditorController.prototype._renderPreview = function () {
+        this._renderTimeout = false;
+    };
+
+    scope.NextendVisualEditorController = NextendVisualEditorController;
+
+    function NextendVisualEditor() {
+        this.fields = {};
+        this.$ = $(this);
+    };
+
+    NextendVisualEditor.prototype.load = function (values) {
+        this._off();
+        this._on();
+    };
+
+    NextendVisualEditor.prototype._on = function () {
+        for (var id in this.fields) {
+            this.fields[id].element.on(this.fields[id].events);
+        }
+    };
+
+    NextendVisualEditor.prototype._off = function () {
+        for (var id in this.fields) {
+            this.fields[id].element.off('.n2-editor');
+        }
+    };
+
+    NextendVisualEditor.prototype.trigger = function (property, value) {
+        this.$.trigger('change', [property, value]);
+    };
+
+    scope.NextendVisualEditor = NextendVisualEditor;
+
+    function NextendVisualRenderer(editorController) {
+        this.editorController = editorController;
+    }
+
+    NextendVisualRenderer.prototype.deleteRules = function (modeKey, pre, selector) {
+        var mode = this.editorController.previewModesList[modeKey],
+            rePre = new RegExp('@pre', "g"),
+            reSelector = new RegExp('@selector', "g");
+        for (var k in mode.selectors) {
+            var rule = k
+                .replace(rePre, pre)
+                .replace(reSelector, selector);
+            nextend.css.deleteRule(rule);
+        }
+    };
+
+    NextendVisualRenderer.prototype.getCSS = function (modeKey, pre, selector, visualTabs, parameters) {
+        var css = '',
+            mode = this.editorController.previewModesList[modeKey],
+            rePre = new RegExp('@pre', "g"),
+            reSelector = new RegExp('@selector', "g");
+
+        for (var k in mode.selectors) {
+            var rule = k
+                .replace(rePre, pre)
+                .replace(reSelector, selector);
+
+            css += rule + "{\n" + mode.selectors[k] + "}\n";
+            if (typeof parameters.deleteRule !== 'undefined') {
+                nextend.css.deleteRule(rule);
+            }
+        }
+
+
+        if (modeKey == 0) {
+            var visualTab = visualTabs[parameters.activeTab];
+            if (parameters.activeTab != 0) {
+                visualTab = $.extend({}, visualTabs[0], visualTab);
+            }
+            css = css.replace(new RegExp('@tab[0-9]*', "g"), this.render(visualTab));
+        } else if (mode.renderOptions.combined) {
+            for (var i = 0; i < visualTabs.length; i++) {
+                css = css.replace(new RegExp('@tab' + i, "g"), this.render(visualTabs[i]));
+            }
+        } else {
+            for (var i = 0; i < visualTabs.length; i++) {
+                visualTabs[i] = $.extend({}, visualTabs[i])
+                css = css.replace(new RegExp('@tab' + i, "g"), this.render(visualTabs[i]));
+            }
+        }
+        return css;
+    };
+
+    NextendVisualRenderer.prototype.render = function (visualData) {
+        var visual = this.makeVisualData(visualData);
+        var css = '',
+            raw = '';
+        if (typeof visual.raw !== "undefined") {
+            raw = visual.raw;
+            delete visual.raw;
+        }
+        for (var k in visual) {
+
+            css += this.deCase(k) + ": " + visual[k] + ";\n";
+        }
+        css += raw;
+        return css;
+    };
+
+    NextendVisualRenderer.prototype.makeVisualData = function (visualData) {
+        var visual = {};
+        for (var property in visualData) {
+            if (visualData.hasOwnProperty(property) && typeof visualData[property] !== 'function') {
+                this['makeStyle' + property](visualData[property], visual);
+            }
+        }
+        return visual;
+    };
+
+    NextendVisualRenderer.prototype.deCase = function (s) {
+        return s.replace(/[A-Z]/g, function (a) {
+            return '-' + a.toLowerCase()
+        });
+    };
+
+    scope.NextendVisualRenderer = NextendVisualRenderer;
+
+})(n2, window);
 
 ;
 (function ($, scope) {

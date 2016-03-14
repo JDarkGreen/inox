@@ -81,22 +81,4 @@ $accesspresslite_settings = get_option( 'accesspresslite_options', $accesspressl
 		</nav><!-- #site-navigation -->
 	</header><!-- #masthead -->
 
-	<section id="slider-banner">
-<?php 
-echo do_shortcode('[smartslider3 slider=1]');
-?>
-    
-<?php /*?>		<?php 
-		if(is_home() || is_front_page() ){
-			do_action( 'accesspresslite_bxslider' ); 
-		}?><?php */?>
-	</section><!-- #slider-banner -->
-	<?php
-	if((is_home() || is_front_page()) && 'page' == get_option( 'show_on_front' )){	
-		$accesspresslite_content_id = "content";	
-	}elseif(is_home() || is_front_page() ){
-	$accesspresslite_content_id = "home-content";
-	}else{
-	$accesspresslite_content_id = "content";
-	} ?>
-	<div id="<?php echo esc_attr($accesspresslite_content_id); ?>" class="site-content">
+	

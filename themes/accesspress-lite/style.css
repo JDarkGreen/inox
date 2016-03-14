@@ -2457,3 +2457,42 @@ Responsive grid for pages
   width: 100%;
   margin-left: 0;
 }
+
+
+/****************************************************************************************************/
+/*------------------------------------ Nuevos estilos - SECTION ------------------------------------*/
+/****************************************************************************************************/
+
+/*section contenedora */
+.section-wrapper{
+	display: block;
+	margin : 20px auto 0px;
+	width  : 80%;	
+}
+
+/*titulo*/
+.section-wrapper__title{
+	line-height  : 1.2;
+	color        : #F60;
+	font-size    : 22px;
+	font-weight  : 500;
+	margin       : 15px auto 25px;
+}
+
+/*section contenedora flexbox*/
+.section-wrapper--flex{
+	display        : flex;
+	justify-content: center;
+}
+
+/****************************************************************************************************/
+/*------------------------------------ SECCION DE GALERIA ----- ------------------------------------*/
+/****************************************************************************************************/
+
+.sectionWrapperMultimedia{}
+
+/*articulos internos*/
+.sectionWrapperMultimedia__article{
+	width : 25%;
+	margin: 0 10px 15px;
+}

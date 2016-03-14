@@ -20,6 +20,26 @@ if(is_front_page()){
 $post_class = get_post_meta( $post_id, 'accesspresslite_sidebar_layout', true );
 ?>
 
+
+<!-- Slider Principal -->
+<section id="slider-banner"> 
+	<?= do_shortcode('[smartslider3 slider=1]'); ?>
+</section><!-- #slider-banner -->
+
+<?php
+	if((is_home() || is_front_page()) && 'page' == get_option( 'show_on_front' )){	
+		$accesspresslite_content_id = "content";	
+	}elseif(is_home() || is_front_page() ){
+		$accesspresslite_content_id = "home-content";	
+	}else{
+		$accesspresslite_content_id = "content";
+	} 
+?>
+
+<div id="<?php echo esc_attr($accesspresslite_content_id); ?>" class="site-content">
+
+
+<!-- Contenedor -->
 <div class="ak-container">
 
 <?php 

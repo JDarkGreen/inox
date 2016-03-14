@@ -1883,7 +1883,7 @@ html[dir="rtl"] .n2-ss-timeline-cti-dot {
 
 .n2-modal.n2-ss-go-pro .n2-ss-rate {
     margin: 50px -20px 0;
-    background: url(//www.iuigv.com/inox/wp-content/plugins/smart-slider-3/library/media/admin/css/../images/free/rate.png);
+    background: url(//localhost/inox/wp-content/plugins/smart-slider-3/library/media/admin/css/../images/free/rate.png);
     height: 90px;
     line-height: 90px;
     color: #ffffff;
@@ -1899,7 +1899,7 @@ html[dir="rtl"] .n2-ss-timeline-cti-dot {
 }
 
 .n2-box-free {
-    background: url(//www.iuigv.com/inox/wp-content/plugins/smart-slider-3/library/media/admin/css/../images/free/box.png);
+    background: url(//localhost/inox/wp-content/plugins/smart-slider-3/library/media/admin/css/../images/free/box.png);
 }
 
 .n2-box-free .n2-box-placeholder {
