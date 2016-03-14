@@ -184,6 +184,62 @@ function inox_create_videos_post_type()
 
 add_action('init','inox_create_videos_post_type');
 
+//DESCARGABLES 
+function inox_create_descargables_post_type()
+{
+	$labels = array(
+		'name'               => __('Descargables'),
+		'singular_name'      => __('Descargable'),
+		'add_new'            => __('Nuevo Descargable'),
+		'add_new_item'       => __('Agregar Nuevo Descargable'),
+		'edit_item'          => __('Editar Descargable'),
+		'view_item'          => __('Ver Descargable'),
+		'search_items'       => __('Buscar Descargable'),
+		'not_found'          => __('Descargable No Encontrado'),
+		'not_found_in_trash' => __('Descargable No Encontrado en la papelera')
+	);
+
+	$args = array(
+		'labels'      => $labels,
+		'has_archive' => true,
+		'public'      => true,
+		'hierachical' => false,
+		'supports'    => array('title','editor','excerpt','custom-fields','thumbnail','page-attributes'),
+		'taxonomies'  => array('post-tag'),
+		'menu_icon'   => 'dashicons-download'
+	);
+
+	register_post_type('descargables',$args);
+}
+
+add_action('init','inox_create_descargables_post_type');
+
+/***********************************************************************************************/
+/* Registrar taxonomía para descargables  */
+/***********************************************************************************************/
+
+add_action( 'init', 'create_descargables_categories_taxonomies', 0 );
+
+function create_descargables_categories_taxonomies() {
+    register_taxonomy(
+        'descargables_categoria_taxonomy',
+        'descargables',
+        array(
+            'labels' => array(
+                'name' => 'Categoría Descargable',
+                'add_new_item' => 'Agregar nueva Categoría Descargable',
+                'new_item_name' => "Nuevo nombre Categoría Descargable"
+            ),
+            'show_ui' => true,
+            'show_tagcloud' => false,
+            'hierarchical' => true
+        )
+    );
+}
+
+
+
+
 /***********************************************************************************************/
 /* Agregar metabox url video para galeria de videos  */
 /***********************************************************************************************/

@@ -1016,13 +1016,17 @@ Menus
 }
 
 .main-navigation li {
-	display: inline-block;
-	position: relative;
-	line-height:40px;
-	font-size:14px;
-	text-transform: uppercase;
-	color:#ababab;
-	white-space: nowrap;
+	display           : inline-block;
+	position          : relative;
+	line-height       :40px;
+	font-size         :14px;
+	text-transform    : uppercase;
+	color             :#ababab;
+	white-space       : nowrap;
+	-webkit-transition: all 200ms ease;
+	-moz-transition   : all 200ms ease;
+	-o-transition     : all 200ms ease;
+	transition        : all 200ms ease;
 }
 
 .main-navigation.menu-right{
@@ -1083,6 +1087,7 @@ Menus
 	min-width: 150px;
 	padding  : 0;
 	color    : white;
+	font-size: 13px;
 }
 
 .main-navigation ul ul li {
