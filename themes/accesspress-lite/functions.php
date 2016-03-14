@@ -118,3 +118,68 @@ require get_template_directory() . '/inc/class-tgm-plugin-activation.php';
  * Implement the More Theme Page
  */
 require get_template_directory() . '/inc/more-themes.php';
+
+
+/***********************************************************************************************/
+/* Agregar nuevo tipo de contenido */
+/***********************************************************************************************/
+
+//IMAGENES
+function inox_create_images_post_type()
+{
+	$labels = array(
+		'name'               => __('Galería de Imagenes'),
+		'singular_name'      => __('Galería de Imagenes'),
+		'add_new'            => __('Nueva Imagen'),
+		'add_new_item'       => __('Agregar Nueva Imagen'),
+		'edit_item'          => __('Editar Imagen'),
+		'view_item'          => __('Ver Imagen'),
+		'search_items'       => __('Buscar Imagen'),
+		'not_found'          => __('Imagen No Encontrada'),
+		'not_found_in_trash' => __('Imagen No Encontrada en la papelera')
+	);
+
+	$args = array(
+		'labels' => $labels,
+		'has_archive' => true,
+		'public' => true,
+		'hierachical' => false,
+		'supports' => array('title','editor','excerpt','custom-fields','thumbnail','page-attributes'),
+		'taxonomies' => array('post-tag','category'),
+		'menu_icon' => 'dashicons-images-alt2'
+	);
+
+	register_post_type('imagenes',$args);
+}
+
+add_action('init','inox_create_images_post_type');
+
+//VIDEOS 
+function inox_create_videos_post_type()
+{
+	$labels = array(
+		'name'               => __('Galería de Videos'),
+		'singular_name'      => __('Galería de Videos'),
+		'add_new'            => __('Nuevo Video'),
+		'add_new_item'       => __('Agregar Nuevo Video'),
+		'edit_item'          => __('Editar Video'),
+		'view_item'          => __('Ver Video'),
+		'search_items'       => __('Buscar Video'),
+		'not_found'          => __('Video No Encontrado'),
+		'not_found_in_trash' => __('Video No Encontrado en la papelera')
+	);
+
+	$args = array(
+		'labels'      => $labels,
+		'has_archive' => true,
+		'public'      => true,
+		'hierachical' => false,
+		'supports'    => array('title','editor','excerpt','custom-fields','thumbnail','page-attributes'),
+		'taxonomies'  => array('post-tag','category'),
+		'menu_icon'   => 'dashicons-format-video'
+	);
+
+	register_post_type('videos',$args);
+}
+
+add_action('init','inox_create_videos_post_type');
