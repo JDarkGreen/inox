@@ -194,6 +194,10 @@ function accesspresslite_scripts() {
 	/* fancybox css*/
 	wp_enqueue_style( 'fancy-box-css', get_template_directory_uri() . '/css/jquery.fancybox.css' );
 
+	//gooogle maps
+	wp_enqueue_script('google-maps', 'https://maps.googleapis.com/maps/api/js?key=AIzaSyBdi8OlNGV4fk-sDIJoHE3hmc8yG1xAdOs&sensor=false');
+	wp_enqueue_script('google-jsapi','https://www.google.com/jsapi');  
+
 	wp_enqueue_style( 'accesspresslite-font-style', get_template_directory_uri() . '/css/fonts.css' );
 	wp_enqueue_style( 'accesspresslite-style', get_stylesheet_uri() );
 

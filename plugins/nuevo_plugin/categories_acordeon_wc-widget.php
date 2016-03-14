@@ -55,6 +55,9 @@ class Categories_Acordeon_Widget extends WP_Widget {
         $args = array(
             'taxonomy'   => 'product_cat',
             'hide_empty' => false,
+            'orderby'    => 'title',
+            'order'      => 'ASC',
+
         );
 
         $all_categories = get_categories( $args ); 
