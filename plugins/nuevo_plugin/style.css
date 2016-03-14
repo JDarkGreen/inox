@@ -1,0 +1,43 @@
+
+
+/* estilos para cada categoria */
+.toggle-category{ 
+	background-color: white;
+	display         : block; 
+	margin          : 0 0 5px;
+}
+/* titulo */
+.toggle-category__title{
+	background      : url('images/bg-categories.jpg');
+	color           : white;
+	cursor          : pointer;
+	display         : block;
+	margin          : 0 auto;
+	padding         : 10px;
+	text-transform  : capitalize;
+	font-size       : 16px;
+	font-weight     : 500; 
+}
+/* menu - ul  */
+.toggle-category__menu{
+	display         : none;
+	background-color: white;	
+	/*border          : 1px solid black;*/
+	list-style      : none; 
+	margin          : 0 auto;
+}
+/* links*/
+.toggle-category__menu li{ padding: 5px 10px !important; }
+.toggle-category__menu li a{
+	color: rgba(0,0,0,9) !important;
+	display           : block;
+	font-size         : 14px;
+	text-transform    : capitalize;
+	-webkit-transition: all 200ms ease;
+	-moz-transition   : all 200ms ease;
+	-o-transition     : all 200ms ease;
+	transition        : all 200ms ease;
+}
+.toggle-category__menu li a:hover{
+	color: #f60 !important;
+}
