@@ -34,3 +34,26 @@
 [12-Mar-2016 15:41:44 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
 [12-Mar-2016 15:43:27 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
 [12-Mar-2016 15:43:29 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:05:36 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:05:49 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:05:55 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:06:06 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:06:08 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:06:26 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:06:43 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:06:46 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 04:06:51 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 04:07:26 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:41:49 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:42:01 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:42:06 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:42:11 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:42:34 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:42:37 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:44:38 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:44:40 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:44:45 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:44:47 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:47:17 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:47:19 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:47:20 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
