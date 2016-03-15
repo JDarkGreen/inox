@@ -2484,6 +2484,10 @@ Responsive grid for pages
 	padding: 15px 0 0;
 }
 
+.section-wrapper--margin{
+	margin: 15px auto;
+}
+
 /*seccion contenedora a la mitad*/
 .section-wrapper__middle{
 	width: 50%;
@@ -2504,6 +2508,14 @@ Responsive grid for pages
 	justify-content: center;
 }
 
+.section-wrapper--flex-wrap{
+	flex-flow: wrap;
+}
+
+.section-wrapper--onlyflex{ 
+	display: flex; 
+}
+
 /****************************************************************************************************/
 /*------------------------------------ SECCION DE GALERIA ----- ------------------------------------*/
 /****************************************************************************************************/
@@ -2512,9 +2524,44 @@ Responsive grid for pages
 
 /*articulos internos*/
 .sectionWrapperMultimedia__article{
-	width : 25%;
+	width : 23%;
 	margin: 0 10px 15px;
 }
+
+/*articulos internos medianos */
+.sectionWrapperMultimedia__article--medium{
+	margin    : 0 10px 15px;
+	padding   : 10px;
+	text-align: center;
+	width     : 20%;
+}
+/*imagen*/
+.sectionWrapperMultimedia__article--medium figure{ width: 70%; margin: 0 auto; }
+
+/*titulo de artículo */
+.sectionWrapperMultimedia__article__title{
+	font-size     : 16px;
+	text-transform: capitalize;
+}
+
+/* botom */
+.sectionWrapperMultimedia__article__button{
+	-moz-border-radius   : 5px;
+	-o-border-radius     : 5px;
+	-webkit-border-radius: 5px;
+	border               : 1px solid black;
+	border-radius        : 5px;
+	color                : #f60;
+	font-size            : 15px;
+	padding              : 8px 10px;
+	text-transform       : uppercase;
+	-moz-transition      : all 200ms ease;
+	-o-transition        : all 200ms ease;
+	-webkit-transition   : all 200ms ease;
+	transition           : all 200ms ease;
+}
+/*hover*/
+.sectionWrapperMultimedia__article__button:hover{ background-color: #191919; color: #f60; border-color: #f60;}
 
 
 /****************************************************************************************************/

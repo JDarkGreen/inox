@@ -119,6 +119,23 @@ require get_template_directory() . '/inc/class-tgm-plugin-activation.php';
  */
 require get_template_directory() . '/inc/more-themes.php';
 
+/***********************************************************************************************/
+/* RETORNAR NUEVOS TIPOS DE ARCHIVO permitidos EN MEDIA UPLOAD */
+/***********************************************************************************************/
+
+add_filter('upload_mimes', 'custom_upload_mimes');
+
+function custom_upload_mimes ( $existing_mimes=array() ) {
+
+	// Add *.EPS files to Media upload
+	$existing_mimes['eps'] = 'application/postscript';
+
+	// Add *.AI files to Media upload
+	$existing_mimes['ai'] = 'application/postscript';
+
+	return $existing_mimes;
+}
+
 
 /***********************************************************************************************/
 /* Agregar nuevo tipo de contenido */
@@ -291,4 +308,91 @@ function cd_meta_box_url_video_save( $post_id )
     if( isset( $_POST['mb_url_video_text'] ) )
         update_post_meta( $post_id, 'mb_url_video_text', wp_kses( $_POST['mb_url_video_text'], $allowed ) );
 }
+
+/***********************************************************************************************/
+/* Agregar metabox subir contenido multimedia a los tipos de post descargables  */
+/***********************************************************************************************/
+function update_edit_form() {
+    echo ' enctype="multipart/form-data"';
+} // end update_edit_form
+add_action('post_edit_form_tag', 'update_edit_form');
+
+
+function add_mb_attachment_downloads() {
+ 
+    // Define the custom attachment para tipo descargable
+    add_meta_box(
+        'wp_custom_attachment',
+        'Personalizar Anexos',
+        'wp_custom_attachment',
+        'descargables',
+        'side'
+    );
+ 
+} // end add_mb_attachment_downloads
+add_action('add_meta_boxes', 'add_mb_attachment_downloads');
+
+function wp_custom_attachment() {
+ 
+    wp_nonce_field(plugin_basename(__FILE__), 'wp_custom_attachment_nonce');
+     
+    $html = '<p class="description">';
+        $html .= 'Carga tu ARCHIVO aquí.';
+    $html .= '</p>';
+    $html .= '<input type="file" id="wp_custom_attachment" name="wp_custom_attachment" value="" style="max-width: 100%;font-size: 9.4px;" />';
+     
+    echo $html;
+ 
+} // end wp_custom_attachment
+
+function save_custom_meta_data($id) {
+ 
+    /* --- security verification --- */
+    if(!wp_verify_nonce($_POST['wp_custom_attachment_nonce'], plugin_basename(__FILE__))) {
+      return $id;
+    } // end if
+       
+    if(defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+      return $id;
+    } // end if
+  	 else {
+        if(!current_user_can('edit_page', $id)) {
+            return $id;
+        } // end if
+    } // end if
+    /* - end security verification - */
+     
+    // Make sure the file array isn't empty
+    if(!empty($_FILES['wp_custom_attachment']['name'])) {
+         
+        // Setup the array of supported file types. In this case, it's just PDF.
+        $supported_types = array('application/pdf','image/png','application/postscript','image/jpeg','application/photoshop');
+         
+        // Get the file type of the upload
+        $arr_file_type = wp_check_filetype(basename($_FILES['wp_custom_attachment']['name']));
+        $uploaded_type = $arr_file_type['type'];
+         
+        // Check if the type is supported. If not, throw an error.
+        if(in_array($uploaded_type, $supported_types)) {
+ 
+            // Use the WordPress API to upload the file
+            $upload = wp_upload_bits($_FILES['wp_custom_attachment']['name'], null, file_get_contents($_FILES['wp_custom_attachment']['tmp_name']));
+     
+            if(isset($upload['error']) && $upload['error'] != 0) {
+                wp_die('Hubo un error cargando tu archivo el error es: ' . $upload['error']);
+            } else {
+                add_post_meta($id, 'wp_custom_attachment', $upload);
+                update_post_meta($id, 'wp_custom_attachment', $upload);     
+            } // end if/else
+ 
+        } else {
+            wp_die("El tipo de archivo no es admitido.");
+        } // end if/else
+         
+    } // end if
+     
+} // end save_custom_meta_data
+add_action('save_post', 'save_custom_meta_data');
+
+
 ?>
