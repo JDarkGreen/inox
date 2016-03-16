@@ -2479,6 +2479,11 @@ Responsive grid for pages
 	width  : 80%;	
 }
 
+/*section contenedora con spacios - padding */
+.section-wrapper--padding{
+	padding: 15px 0 0;
+}
+
 /*seccion contenedora a la mitad*/
 .section-wrapper__middle{
 	width: 50%;
