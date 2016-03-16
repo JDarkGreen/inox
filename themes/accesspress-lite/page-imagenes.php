@@ -11,7 +11,7 @@
 	<h2 class="section-wrapper__title"><?php _e('Galería de Imágenes:' , 'inox-framework' ); ?></h2>
 
 	<!-- Contenedor flexible -->
-	<section class="section-wrapper--flex">
+	<section class="section-wrapper--flex section-wrapper--flex-wrap">
 		<?php  
 			//the query
 			$args = array(

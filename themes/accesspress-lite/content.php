@@ -35,7 +35,7 @@ $cat_portfolio = $accesspresslite_settings['portfolio_cat'];
 		
 		<div><?php echo accesspresslite_excerpt( get_the_content() , 400 ) ?></div>
 		</div>
-		<a href="<?php the_permalink(); ?>" class="cat-event-more bttn"><?php _e('More','accesspresslite');?></a>
+		<a href="<?php the_permalink(); ?>" class="cat-event-more bttn"><?php _e('Ver Más','accesspresslite');?></a>
 	</div><!-- .entry-content -->
 </article>
 
@@ -111,7 +111,7 @@ $full_image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), '
 		<div class="short-content">
 		<?php echo accesspresslite_excerpt( get_the_content() , 500 ) ?>
 		</div>
-		<a href="<?php the_permalink(); ?>" class="bttn"><?php _e('More','accesspresslite')?></a>
+		<a href="<?php the_permalink(); ?>" class="bttn"><?php _e('Ver Más','accesspresslite')?></a>
 		<?php
 			wp_link_pages( array(
 				'before' => '<div class="page-links">' . __( 'Pages:', 'accesspresslite' ),

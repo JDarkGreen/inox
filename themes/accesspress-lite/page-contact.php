@@ -81,9 +81,11 @@
 
 		var myLatLng = {lat: -12.177706, lng: -76.992617 };
 
+		var centrado = {lat: -12.1775747, lng:-76.9958809};
+
 		var map = new google.maps.Map(document.getElementById('canvas-map'), {
-			zoom  : 14,
-			center: myLatLng
+			zoom  : 17,
+			center: centrado
 		});
 
 		var infowindow = new google.maps.InfoWindow({

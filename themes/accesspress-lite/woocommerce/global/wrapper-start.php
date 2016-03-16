@@ -25,6 +25,10 @@ switch( $template ) {
 		echo '<div id="primary" class="content-area"><div id="content" role="main" class="site-content twentyfourteen"><div class="tfwc">';
 		break;
 	default :
+<<<<<<< HEAD
 		echo '<div class="ak-container section-wrapper--padding"><div id="primary">';
+=======
+		echo '<div class="ak-container section-wrapper--margin"><div id="primary">';
+>>>>>>> 5993635493809ece58b85b0ffa4504771c5c10ce
 		break;
 }

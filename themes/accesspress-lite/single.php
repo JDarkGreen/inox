@@ -11,7 +11,7 @@ $accesspresslite_settings = get_option( 'accesspresslite_options', $accesspressl
 $post_class = get_post_meta( $post -> ID, 'accesspresslite_sidebar_layout', true );
 ?>
 
-<div class="ak-container">
+<div class="ak-container section-wrapper--margin">
 	<?php 
 		if ($post_class=='both-sidebar') { ?>
 			<div id="primary-wrap" class="clearfix"> 
