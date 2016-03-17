@@ -65,6 +65,7 @@
 							$src = "catalogos.jpg";
 							break;
 						default:
+							$src = "pdf.jpg";
 							break;
 					}
 				?>
