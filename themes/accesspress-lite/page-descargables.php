@@ -55,14 +55,11 @@
 					//según sea el tipo de contenido
 					$src = "";
 					switch ($tax->slug) {
-						case 'brochures':
-							$src = "brochure.jpg";
-							break;
 						case 'fichas-tecnicas':
-							$src = "pdf.jpg";
+							$src = "icono_ficha_t.png";
 							break;
-						case 'catalogos':
-							$src = "catalogos.jpg";
+						case 'publicaciones':
+							$src = "icono_publi.png";
 							break;
 						default:
 							$src = "pdf.jpg";
