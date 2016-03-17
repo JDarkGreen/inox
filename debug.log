@@ -57,3 +57,12 @@
 [15-Mar-2016 12:47:17 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
 [15-Mar-2016 12:47:19 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
 [15-Mar-2016 12:47:20 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:51:01 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:51:05 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:51:49 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:51:52 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:52:07 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:52:10 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:52:17 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
+[15-Mar-2016 12:52:20 UTC] PHP Notice:  Undefined index: after_widget in C:\xampp\htdocs\inox\wp-content\plugins\nuevo_plugin\categories_acordeon_wc-widget.php on line 97
+[15-Mar-2016 12:52:32 UTC] PHP Notice:  Use of undefined constant WPLANG - assumed 'WPLANG' in C:\xampp\htdocs\inox\wp-content\plugins\woocommerce-es\woocommerce-es.php on line 109
