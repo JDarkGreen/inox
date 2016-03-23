@@ -145,15 +145,15 @@
 
 .bx-wrapper .bx-prev {
 	left: -100px;
-	background: url(images/controls.png) no-repeat 0 0;
+	background: url(images/btn_inoxchef-prev.jpg) no-repeat;
 }
 
 .bx-wrapper .bx-next {
 	right: -100px;
-	background: url(images/controls.png) no-repeat right 0;
+	background: url(images/btn_inoxchef-next.jpg) no-repeat;
 }
 
-.bx-wrapper:hover  .bx-prev{
+.bx-wrapper:hover .bx-prev{
 	left: 10px;
 }
 
@@ -162,25 +162,25 @@
 }
 
 .bx-wrapper .bx-prev:hover {
-	 background-position: -56px 0;
+	background-position: 0 0;
 }
 
 .bx-wrapper .bx-next:hover {
-	background-position: -155px 0;
+	background-position: 0 0;
 }
 
 .bx-wrapper .bx-controls-direction a {
-	position: absolute;
-	top: 50%;
-	margin-top: -28px;
-	outline: 0;
-	width: 56px;
-	height: 81px;
-	text-indent: -9999px;
-	z-index: 9999;
-	transition:all 0.2s ease;
-	-moz-transition:all 0.2s ease;
+	-moz-transition   :all 0.2s ease;
 	-webkit-transition:all 0.2s ease;
+	height            : 81px;
+	margin-top        : -30px;
+	outline           : 0;
+	position          : absolute;
+	text-indent       : -9999px;
+	top               : 50%;
+	transition        : all 0.2s ease;
+	width             : 56px;
+	z-index           : 9999;
 }
 
 .bx-wrapper .bx-controls-direction a.disabled {
