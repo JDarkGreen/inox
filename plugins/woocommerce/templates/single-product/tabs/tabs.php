@@ -27,9 +27,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $tabs = apply_filters( 'woocommerce_product_tabs', array() );
 
+//var_dump($tabs);
+
 $tab_description = $tabs['description'];
 
-if ( ! empty( $tabs ) ) : ?>
+//if ( ! empty( $tabs ) ) : 
+if ( ! empty( $tab_description ) ) : ?>
 
 	<div class="woocommerce-tabs wc-tabs-wrapper">
 		<ul class="tabs wc-tabs">
