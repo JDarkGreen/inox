@@ -46,7 +46,7 @@
 					<label for="input_name"><?php _e( 'Nombre: ' , 'inox-framework' ); ?></label> <br/>
 					<input type="text" id="input_name" name="input_name" placeholder="Escriba su nombre:" required />
 				</div><!-- /form-group -->
-				<div class="form-group">
+				<!--div class="form-group">
 					<label for="input_lastname"><?php _e( 'Apellidos: ' , 'inox-framework' ); ?></label> <br/>
 					<input type="text" id="input_lastname" name="input_lastname" placeholder="Escriba sus apellidos:" required/>
 				</div><!-- /form-group -->
@@ -54,7 +54,7 @@
 					<label for="input_email"><?php _e( 'Email: ' , 'inox-framework' ); ?></label> <br/>
 					<input type="email" id="input_email" name="input_email" placeholder="Escriba su Email:" required/>
 				</div><!-- /form-group -->
-				<div class="form-group">
+				<!--div class="form-group">
 					<label for="inpu_subject"><?php _e( 'Asunto: ' , 'inox-framework' ); ?></label> <br/>
 					<input type="text" id="input_subject" name="inpu_subject" placeholder="Escriba el Asunto:" required />
 				</div><!-- /form-group -->

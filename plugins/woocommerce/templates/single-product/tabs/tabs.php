@@ -27,9 +27,20 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 $tabs = apply_filters( 'woocommerce_product_tabs', array() );
 
+$tab_description = $tabs['description'];
+
 if ( ! empty( $tabs ) ) : ?>
 
 	<div class="woocommerce-tabs wc-tabs-wrapper">
+		<ul class="tabs wc-tabs">
+			<li class="<?php echo esc_attr( $key ); ?>_tab">
+				<a href="#tab-description">Descripción</a>
+			</li>			
+		</ul>
+		<div class="panel entry-content wc-tab" id="tab-description">
+			<?php call_user_func( $tab_description['callback'], 'description', "woocommerce_product_description_tab" ); ?>
+		</div>
+		<?php /*
 		<ul class="tabs wc-tabs">
 			<?php foreach ( $tabs as $key => $tab ) : ?>
 				<li class="<?php echo esc_attr( $key ); ?>_tab">
@@ -42,6 +53,7 @@ if ( ! empty( $tabs ) ) : ?>
 				<?php call_user_func( $tab['callback'], $key, $tab ); ?>
 			</div>
 		<?php endforeach; ?>
+		*/ ?>
 	</div>
 
 <?php endif; ?>
